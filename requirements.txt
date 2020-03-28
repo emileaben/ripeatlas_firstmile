@@ -1,0 +1,4 @@
+arrow
+requests
+numpy
+matplotlib==1.4.3

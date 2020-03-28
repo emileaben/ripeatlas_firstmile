@@ -2,10 +2,19 @@
 import gzip
 import json
 import glob
+import sys
+import os
+
+in_dir = sys.argv[1]
+
+in_path = '/mnt/data/%s' % in_dir
+out_path = '/mnt/data/perprobe/%s' % in_dir
+
+os.system("mkdir -p %s" % out_path )
 
 outs = {} # probe_id to file descriptor
 
-for fname in glob.glob("./splits/atlas_first_mile_*.json"):
+for fname in glob.glob("%s/atlas_first_mile_*.json" % in_path ):
     print("processing %s" % fname )
     #with gzip.open(fname,'rt') as inf:
     with open(fname,'rt') as inf:
@@ -17,7 +26,7 @@ for fname in glob.glob("./splits/atlas_first_mile_*.json"):
             try:
                 #outs.setdefault( d['prb_id'], gzip.open("atlas_firstmile_p%s.jsonf.gz" % d['prb_id'], 'w' ) )
                 if not d['prb_id'] in outs:
-                    newfd = open("./splits/atlas_firstmile_p%s.jsonf" % d['prb_id'], 'wt' )
+                    newfd = open("%s/atlas_firstmile_p%s.jsonf" % (out_path,d['prb_id']), 'wt' )
                     outs[ d['prb_id'] ] = newfd
                     print( len( outs.keys() ) )
             except:
@@ -27,7 +36,7 @@ for fname in glob.glob("./splits/atlas_first_mile_*.json"):
                     fd.close()
                     print("closed fd for %s" % prb_id  )
                 if not d['prb_id'] in outs:
-                    newfd = open("./splits/atlas_firstmile_p%s.jsonf" % d['prb_id'], 'at' )
+                    newfd = open("%s/atlas_firstmile_p%s.jsonf" % (out_path,d['prb_id']), 'at' )
                     outs[ d['prb_id'] ] = newfd
                     print( len( outs.keys() ) )
                 #outs.setdefault( d['prb_id'], gzip.open("atlas_firstmile_p%s.jsonf.gz" % d['prb_id'], 'a' ) ) # make it append, not write! multiple gzstreams written that way ...
